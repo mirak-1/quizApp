@@ -1,13 +1,15 @@
 from PyQt5.QtWidgets import (QApplication, QWidget, QRadioButton, QHBoxLayout, QPushButton,
                              QVBoxLayout, QLabel, QButtonGroup)
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QTimer
+import quiz
 class QuizApp(QWidget):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Quiz App")
         self.setGeometry(100, 100, 400, 300) # x, y , width, height
+        self.questions = quiz.getQuiz()
+        self.current_question = 0
         self.init_ui()
-    
     def init_ui(self):
         # Create layout
         layout = QVBoxLayout()
@@ -26,22 +28,13 @@ class QuizApp(QWidget):
         self.answers = QVBoxLayout()
         layout.addLayout(self.answers)
         
+        self.load_question(0)
         self.setLayout(layout)
 
 
     def update_layout(self, question, answers, correct):
         self.question_label.setText(question)
-        
-        while self.answers.count():
-            child = self.answers.takeAt(0)
-            if child.widget():
-                child.widget().deleteLater()
-            elif child.layout():
-                while child.layout().count():
-                    subChild = child.layout().takeAt(0)
-                    if subChild.widget():
-                        subChild.widget().deleteLater()
-        
+        self.clear_answers()
         self.answers_group.clear()
         
         row1 = QHBoxLayout()
@@ -78,4 +71,28 @@ class QuizApp(QWidget):
         else:
             print("Wrong answer! ")
             b.setStyleSheet("border: 1px solid red; background-color: white; border-radius: 15px; color: red")
-    
+        
+        QTimer.singleShot(2000, self.load_next_question)
+
+    def load_question(self, index):
+        if (index < len(self.questions)):
+            q = self.questions[index]
+            self.update_layout(q['question'], q['answers'], q['correct'])
+        else:
+            self.clear_answers()
+            self.question_label.setText("The quiz is now completed")
+
+    def load_next_question(self):
+        self.current_question += 1
+        self.load_question(self.current_question)
+        
+    def clear_answers(self):
+         while self.answers.count():
+            child = self.answers.takeAt(0)
+            if child.widget():
+                child.widget().deleteLater()
+            elif child.layout():
+                while child.layout().count():
+                    subChild = child.layout().takeAt(0)
+                    if subChild.widget():
+                        subChild.widget().deleteLater()
