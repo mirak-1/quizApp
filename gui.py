@@ -50,12 +50,12 @@ class QuizApp(QWidget):
         if (len(answers) == 4):
             for i in range(2):
                 btn = QPushButton(answers[i], self)
-                btn.clicked.connect(lambda checked, text = answers[i]: self.check_answer(text, correct))
+                btn.clicked.connect(lambda checked, text = answers[i], b= btn: self.check_answer(text, correct, b))
                 self.answers_group.append(btn)
                 row1.addWidget(btn)
             for i in range(2, 4):
                 btn = QPushButton(answers[i], self)
-                btn.clicked.connect(lambda checked, text = answers[i]: self.check_answer(text, correct))
+                btn.clicked.connect(lambda checked, text = answers[i], b= btn: self.check_answer(text, correct, b))
                 self.answers_group.append(btn)
                 row2.addWidget(btn)
             
@@ -64,15 +64,18 @@ class QuizApp(QWidget):
         else:
             for i in range(2):
                 btn = QPushButton(answers[i], self)
-                btn.clicked.connect(lambda checked, text = answers[i]: self.check_answer(text, correct))
+                btn.clicked.connect(lambda checked, text = answers[i], b = btn: self.check_answer(text, correct, b))
                 self.answers_group.append(btn)
                 row1.addWidget(btn)
                 
             self.answers.addLayout(row1)
             
-    def check_answer(self, text, correct):
+    def check_answer(self, text, correct, b: QPushButton):
+        for btn in self.answers_group:
+            btn.setEnabled(False)
         if text == correct:
-            print("Correct answer! ")
+            b.setStyleSheet("border: 1px solid #00FF00; background-color: white; border-radius: 15px; color: #00FF00")
         else:
             print("Wrong answer! ")
+            b.setStyleSheet("border: 1px solid red; background-color: white; border-radius: 15px; color: red")
     
