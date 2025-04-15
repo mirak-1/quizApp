@@ -6,7 +6,7 @@ class QuizApp(QWidget):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Quiz App")
-        self.setGeometry(100, 100, 400, 300) # x, y , width, height
+        self.setGeometry(100, 100, 600, 500) # x, y , width, height
         self.questions = quiz.getQuiz()
         self.current_question = 0
         self.main_layout = QVBoxLayout()

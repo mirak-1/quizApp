@@ -1,29 +1,33 @@
 import requests
 from pprint import pprint
 from random import randint
-base_url = "https://opentdb.com/api.php?amount=10&type=boolean"
+import html
+
+base_url = "https://opentdb.com/api.php?amount=10"
 amount = 10
-res = requests.get("https://opentdb.com/api.php?amount=10&type=boolean")
+res = requests.get("https://opentdb.com/api.php?amount=10&difficulty=easy&type=boolean")
+"""https://opentdb.com/api.php?amount=10&difficulty=easy&type=multiple"""
+
+difficulty = ["easy", "difficult", "medium"]
+type = ["multiple", "boolean"]
 
 data = res.json()
 
-questions = [
-            {
-                "question": "What is the capital of France?",
-                "answers": ["Berlin", "Madrid", "Paris", "Rome"],
-                "correct": "Paris"
-            },
-            {
-                "question": "Which language is used for web apps?",
-                "answers": ["Python", "HTML", "C++", "Java"],
-                "correct": "HTML"
-            },
-            {
-                "question": "What’s the result of 3 * 3?",
-                "answers": ["6", "9", "12", "3"],
-                "correct": "9"
-            }
-]
+def format_data(data):
+    clean_data = []
+    for question in data:
+        q = {}
+        q['question'] = question['question']
+        q['correct'] = question['correct_answer']
+        q['difficulty'] = question['difficulty']
+        q['answers'] = [question['correct_answer']]
+        for answer in question['incorrect_answers']:
+            q['answers'].append(answer)
+
+        clean_data.append(q)
+        
+    return clean_data
+#pprint(format_data(data['results']))
 
 def getQuiz():
-    return questions
+    return format_data(data['results'])
